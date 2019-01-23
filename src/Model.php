@@ -2,9 +2,11 @@
 
 namespace henriquematias\ORM;
 
+use henriquematias\ORM\Drivers\DriverStrategy;
+
 class Model
 {
-    public function setDriver($driver)
+    public function setDriver(DriverStrategy $driver)
     {
         return $driver;
     }
