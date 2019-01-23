@@ -3,6 +3,7 @@
 namespace henriquematias\ORM\Drivers;
 
 use henriquematias\ORM\Model;
+use PDO;
 
 class MySqlPdo implements DriverStrategy
 {
@@ -22,6 +23,20 @@ class MySqlPdo implements DriverStrategy
 
     public function save(Model $data)
     {
+        if (!empty($data->id)) {
+            $query = 'UPDATE %s SET %s';
+
+            $dataToUpdate = $this->params($data);
+
+            $query = sprintf($query, $this->table, $dataToUpdate);
+            $query .= ' WHERE id=:id';
+
+            $this->query = $this->pdo->prepare($query);
+            $this->bind($data);
+
+            return $this;
+        }
+
         $query = 'INSERT INTO %s (%s) VALUES (%s)';
 
         $fields = [];
@@ -38,9 +53,7 @@ class MySqlPdo implements DriverStrategy
 
         $this->query= $this->pdo->prepare($query);
 
-        foreach ($data as $field => $value) {
-            $this->query->bindValue($field, $value);
-        }
+        $this->bind($data);
 
         var_dump($query);
 
@@ -49,7 +62,15 @@ class MySqlPdo implements DriverStrategy
 
     public function select(array $data=[])
     {
+        $query = "SELECT * FROM {$this->table}";
+        $data = $this->params($data);
+        if ($data) {
+            $query .= ' WHERE ' . $data;
+        }
 
+        $this->query= $this->pdo->prepare($query);
+        $this->bind($data);
+        return $this;
     }
 
     public function delete(array $data=[])
@@ -59,18 +80,36 @@ class MySqlPdo implements DriverStrategy
 
     public function exec($query = null)
     {
+        if ($query) {
+            $this->query = $this->pdo->prepare($query);
+        }
         $this->query->execute();
         return $this;
     }
 
     public function first(array $data=[])
     {
-
+        return $this->query->fetch(PDO::FETCH_ASSOC);
     }
 
     public function all(array $data=[])
     {
-
+       return $this->query->fetch(PDO::FETCH_ASSOC); 
     }
 
+    protected function params($conditions)
+    {
+        $field = [];
+        foreach ($conditions as $field => $value) {
+            $fields[] = $field . '=:' . $field;
+        }
+
+        return implode(', ', $fields);
+    }
+
+    protected function bind($data) {
+        foreach ($data as $field => $value) {
+            $this->query->bindValue($field, $value);
+        }
+    }
 }
