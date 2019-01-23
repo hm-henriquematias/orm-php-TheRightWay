@@ -18,6 +18,8 @@ $model->setDriver($driver);
 
 //Inserção de registros
 $model->name = 'Henrique';
+$model->age = 22;
+$model->email = 'henriquematiasdesouza@gmail.com';
 $model->save();
 
 //Basca de vários registros

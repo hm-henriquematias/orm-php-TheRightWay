@@ -36,6 +36,12 @@ class MySqlPdo implements DriverStrategy
 
         $query = sprintf($query, $this->table, $fields, $fieldsToBind);
 
+        $this->query= $this->pdo->prepare($query);
+
+        foreach ($data as $field => $value) {
+            $this->query->bindValue($field, $value);
+        }
+
         var_dump($query);
 
         return $this;
@@ -53,7 +59,8 @@ class MySqlPdo implements DriverStrategy
 
     public function exec($query = null)
     {
-
+        $this->query->execute();
+        return $this;
     }
 
     public function first(array $data=[])
