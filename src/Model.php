@@ -8,4 +8,29 @@ class Model
     {
         return $driver;
     }
+
+    protected function getDriver()
+    {
+
+    }
+
+    public function save()
+    {
+
+    }
+
+    public function findAll(array $conditions = [])
+    {
+        
+    }
+
+    public function findFirst($id)
+    {
+        
+    }
+
+    public function delete()
+    {
+        
+    }
 }
