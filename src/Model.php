@@ -10,13 +10,13 @@ class Model
 
     public function setDriver(DriverStrategy $driver)
     {
-        $this->driver;
+        $this->driver = $driver;
         return $this;
     }
 
     protected function getDriver()
     {
-        return $driver;
+        return $this->driver;
     }
 
     public function save()
