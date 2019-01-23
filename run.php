@@ -40,3 +40,6 @@ var_dump($model->findAll());
 // var_dump($model->findFirst(2));
 
 //Remoção de um registro
+$model->id = 1;
+$model->delete();
+var_dump($model->findAll());
